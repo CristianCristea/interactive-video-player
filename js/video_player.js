@@ -190,14 +190,14 @@
 
   $videoContainer.mouseenter(function () {
     $buttonsToHide.fadeIn(400);
-    $controls.animate({
+    $controls.stop().animate({
     bottom: "50px"
    }, 400);
   });
 
   $videoContainer.mouseleave(function () {
     $buttonsToHide.fadeOut(400);
-    $controls.animate({
+    $controls.stop().animate({
     bottom: "20px"
    }, 400);
   });
@@ -230,7 +230,7 @@
   function secondsFromTimespan(timeSpan) {
     if(!timeSpan || !timeSpan.indexOf(':')) return 0;
     var parts = timeSpan.split(':');
-    return +parts[0] * 60 + +parts[1]
+    return + parts[0] * 60 + parts[1];
   }
 
   var transcript = $("span[data-start]");
