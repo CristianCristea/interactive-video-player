@@ -7,7 +7,7 @@ var gulp        = require('gulp'),
     del         = require('del'),
     sass        = require('gulp-sass'),
     jshint      = require('gulp-jshint'),
-    bSync       = require('browser-sync'),
+    bSync       = require('browser-sync').create(),
     through     = require('through2'),
     prefix      = require('gulp-autoprefixer'),
     combiner    = require('stream-combiner2'),
@@ -30,17 +30,9 @@ var prod = function(task) {
     return isprod ? task : noop();
 };
 
-gulp.task('test', function() {
-  return gulp.src(['scripts/**/*.js', '!scripts/vendor/**/*.js'])
-    // .pipe(cached('hint'))
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'))
-    .pipe(jshint.reporter('fail'));
-});
-
 // concat, minify js
 gulp.task("scripts", 
-  gulp.series('test', function scriptsInternal() {
+  gulp.series(function scriptsInternal() {
     return gulp.src([
         // 'js/jquery.js',
         'js/**/*.js',
@@ -50,7 +42,8 @@ gulp.task("scripts",
     .pipe(uglify())
     .pipe(rename('scripts.min.js'))
     .pipe(dev(sourcemaps.write('.')))
-    .pipe(gulp.dest('js'));
+    .pipe(gulp.dest('js'))
+    .pipe(bSync.stream());
 }));
 
 // sass,  minify css
@@ -62,7 +55,8 @@ gulp.task('styles', function() {
     .pipe(minifyCSS())
     .pipe(rename('styles.min.css'))
     .pipe(dev(sourcemaps.write('.')))
-    .pipe(gulp.dest('css'));
+    .pipe(gulp.dest('css'))
+    .pipe(bSync.stream());
 });
 
 // delete dist before a new build
@@ -72,7 +66,7 @@ gulp.task('clean', function() {
 
 gulp.task('server', function(done) {
   if (!isprod) {
-    bSync({
+    bSync.init({
       server: {
         baseDir: ['./']
       }
@@ -85,7 +79,7 @@ gulp.task('watcher', function watcher(done) {
       if (!isprod) {
         gulp.watch(['js/**/*.js', '!js/vendor/**/*.js'], gulp.parallel('scripts'));
         gulp.watch('scss/**/*.scss', gulp.parallel('styles'));
-        gulp.watch('./**/*', bSync.reload);
+        gulp.watch('./**/*').on('change', bSync.reload);
       }
       done();
     });
