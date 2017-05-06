@@ -189,15 +189,15 @@
   var $dataFullscreenControls = $('figure[data-fullscreen="true"]').children('.controls');
 
   $videoContainer.mouseenter(function () {
-    $buttonsToHide.stop().fadeIn(400);
-    $controls.stop().animate({
+    $buttonsToHide.stop(false, false).fadeIn(400);
+    $controls.stop(false, false).animate({
     bottom: "50px"
    }, 400);
   });
 
-  $(video).mouseleave(function () {
-    $buttonsToHide.stop().fadeOut(300);
-    $controls.stop().animate({
+  $videoContainer.mouseleave(function () {
+    $buttonsToHide.stop(false, false).fadeOut(300);
+    $controls.stop(false, false).animate({
     bottom: "20px"
    }, 400);
   });
